@@ -34,8 +34,7 @@ export function CustomNavigation({ lists }: NavigationProps) {
 
   // Create SuperADMIN-only navigation items
   const superAdminNavItems = isSuperAdmin ? [
-    createElement(NavItem, { key: 'introduction', href: '/introduction', children: '(A) Introduction' }),
-    createElement(NavItem, { key: 'cursor101', href: '/cursor101', children: '(B) Cursor 101' }),
+    createElement(NavItem, { key: 'cursor101', href: '/cursor101', children: 'Cursor 101' }),
   ] : []
 
   // Create regular list navigation items
@@ -47,6 +46,8 @@ export function CustomNavigation({ lists }: NavigationProps) {
     createElement(NavList, null,
       createElement(NavItem, { href: '/', children: 'Dashboard' }),
       createElement('hr', { style: { margin: '8px 0', border: 'none', borderTop: '1px solid #e5e7eb' } }),
+      // Introduction page - accessible to all users
+      createElement(NavItem, { key: 'introduction', href: '/introduction', children: 'Introduction' }),
       // Integrate SuperADMIN tabs with regular navigation
       ...superAdminNavItems,
       ...listNavItems

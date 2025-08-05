@@ -5,7 +5,7 @@ type User {
   id: ID!
   name: String
   password: PasswordState
-  isAdmin: Boolean
+  role: Role
 }
 
 type PasswordState {
@@ -14,6 +14,7 @@ type PasswordState {
 
 input UserWhereUniqueInput {
   id: ID
+  name: String
 }
 
 input UserWhereInput {
@@ -21,7 +22,8 @@ input UserWhereInput {
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
   id: IDFilter
-  isAdmin: BooleanFilter
+  name: StringFilter
+  role: RoleWhereInput
 }
 
 input IDFilter {
@@ -35,14 +37,37 @@ input IDFilter {
   not: IDFilter
 }
 
-input BooleanFilter {
-  equals: Boolean
-  not: BooleanFilter
+input StringFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringFilter
+}
+
+input NestedStringFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringFilter
 }
 
 input UserOrderByInput {
   id: OrderDirection
-  isAdmin: OrderDirection
+  name: OrderDirection
 }
 
 enum OrderDirection {
@@ -53,7 +78,13 @@ enum OrderDirection {
 input UserUpdateInput {
   name: String
   password: String
-  isAdmin: Boolean
+  role: RoleRelateToOneForUpdateInput
+}
+
+input RoleRelateToOneForUpdateInput {
+  create: RoleCreateInput
+  connect: RoleWhereUniqueInput
+  disconnect: Boolean
 }
 
 input UserUpdateArgs {
@@ -64,7 +95,208 @@ input UserUpdateArgs {
 input UserCreateInput {
   name: String
   password: String
-  isAdmin: Boolean
+  role: RoleRelateToOneForCreateInput
+}
+
+input RoleRelateToOneForCreateInput {
+  create: RoleCreateInput
+  connect: RoleWhereUniqueInput
+}
+
+type Role {
+  id: ID!
+  name: String
+  canCreateUsers: Boolean
+  canReadUsers: Boolean
+  canUpdateUsers: Boolean
+  canDeleteUsers: Boolean
+  canManageRoles: Boolean
+  canAccessAdminUI: Boolean
+  users(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
+  usersCount(where: UserWhereInput! = {}): Int
+}
+
+input RoleWhereUniqueInput {
+  id: ID
+}
+
+input RoleWhereInput {
+  AND: [RoleWhereInput!]
+  OR: [RoleWhereInput!]
+  NOT: [RoleWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  canCreateUsers: BooleanFilter
+  canReadUsers: BooleanFilter
+  canUpdateUsers: BooleanFilter
+  canDeleteUsers: BooleanFilter
+  canManageRoles: BooleanFilter
+  canAccessAdminUI: BooleanFilter
+  users: UserManyRelationFilter
+}
+
+input BooleanFilter {
+  equals: Boolean
+  not: BooleanFilter
+}
+
+input UserManyRelationFilter {
+  every: UserWhereInput
+  some: UserWhereInput
+  none: UserWhereInput
+}
+
+input RoleOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  canCreateUsers: OrderDirection
+  canReadUsers: OrderDirection
+  canUpdateUsers: OrderDirection
+  canDeleteUsers: OrderDirection
+  canManageRoles: OrderDirection
+  canAccessAdminUI: OrderDirection
+}
+
+input RoleUpdateInput {
+  name: String
+  canCreateUsers: Boolean
+  canReadUsers: Boolean
+  canUpdateUsers: Boolean
+  canDeleteUsers: Boolean
+  canManageRoles: Boolean
+  canAccessAdminUI: Boolean
+  users: UserRelateToManyForUpdateInput
+}
+
+input UserRelateToManyForUpdateInput {
+  disconnect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input RoleUpdateArgs {
+  where: RoleWhereUniqueInput!
+  data: RoleUpdateInput!
+}
+
+input RoleCreateInput {
+  name: String
+  canCreateUsers: Boolean
+  canReadUsers: Boolean
+  canUpdateUsers: Boolean
+  canDeleteUsers: Boolean
+  canManageRoles: Boolean
+  canAccessAdminUI: Boolean
+  users: UserRelateToManyForCreateInput
+}
+
+input UserRelateToManyForCreateInput {
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+}
+
+type Todo {
+  id: ID!
+  title: String
+  description: String
+  status: String
+  priority: String
+  assignedTo: User
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
+
+input TodoWhereUniqueInput {
+  id: ID
+}
+
+input TodoWhereInput {
+  AND: [TodoWhereInput!]
+  OR: [TodoWhereInput!]
+  NOT: [TodoWhereInput!]
+  id: IDFilter
+  title: StringFilter
+  description: StringFilter
+  status: StringNullableFilter
+  priority: StringNullableFilter
+  assignedTo: UserWhereInput
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: StringNullableFilter
+}
+
+input DateTimeNullableFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: DateTimeNullableFilter
+}
+
+input TodoOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+  description: OrderDirection
+  status: OrderDirection
+  priority: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input TodoUpdateInput {
+  title: String
+  description: String
+  status: String
+  priority: String
+  assignedTo: UserRelateToOneForUpdateInput
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input UserRelateToOneForUpdateInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  disconnect: Boolean
+}
+
+input TodoUpdateArgs {
+  where: TodoWhereUniqueInput!
+  data: TodoUpdateInput!
+}
+
+input TodoCreateInput {
+  title: String
+  description: String
+  status: String
+  priority: String
+  assignedTo: UserRelateToOneForCreateInput
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input UserRelateToOneForCreateInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
 }
 
 """
@@ -79,9 +311,20 @@ type Mutation {
   updateUsers(data: [UserUpdateArgs!]!): [User]
   deleteUser(where: UserWhereUniqueInput!): User
   deleteUsers(where: [UserWhereUniqueInput!]!): [User]
+  createRole(data: RoleCreateInput!): Role
+  createRoles(data: [RoleCreateInput!]!): [Role]
+  updateRole(where: RoleWhereUniqueInput!, data: RoleUpdateInput!): Role
+  updateRoles(data: [RoleUpdateArgs!]!): [Role]
+  deleteRole(where: RoleWhereUniqueInput!): Role
+  deleteRoles(where: [RoleWhereUniqueInput!]!): [Role]
+  createTodo(data: TodoCreateInput!): Todo
+  createTodos(data: [TodoCreateInput!]!): [Todo]
+  updateTodo(where: TodoWhereUniqueInput!, data: TodoUpdateInput!): Todo
+  updateTodos(data: [TodoUpdateArgs!]!): [Todo]
+  deleteTodo(where: TodoWhereUniqueInput!): Todo
+  deleteTodos(where: [TodoWhereUniqueInput!]!): [Todo]
   endSession: Boolean!
   authenticateUserWithPassword(name: String!, password: String!): UserAuthenticationWithPasswordResult
-  createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
 }
 
 union UserAuthenticationWithPasswordResult = UserAuthenticationWithPasswordSuccess | UserAuthenticationWithPasswordFailure
@@ -95,15 +338,16 @@ type UserAuthenticationWithPasswordFailure {
   message: String!
 }
 
-input CreateInitialUserInput {
-  name: String
-  password: String
-}
-
 type Query {
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   usersCount(where: UserWhereInput! = {}): Int
+  role(where: RoleWhereUniqueInput!): Role
+  roles(where: RoleWhereInput! = {}, orderBy: [RoleOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: RoleWhereUniqueInput): [Role!]
+  rolesCount(where: RoleWhereInput! = {}): Int
+  todo(where: TodoWhereUniqueInput!): Todo
+  todos(where: TodoWhereInput! = {}, orderBy: [TodoOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: TodoWhereUniqueInput): [Todo!]
+  todosCount(where: TodoWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: User
 }

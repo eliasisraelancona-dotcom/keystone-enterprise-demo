@@ -1,0 +1,42 @@
+{
+  "version": "ts-gql-document-extractor@v3,@babel/parser@7.26.10",
+  "integrity": "__TS_GQL_INTEGRITY_00aef9aeed7a3d19860d428bc277d748_TS_GQL_INTEGRITY__",
+  "cache": {
+    "/Users/jaimeisraelcampeas/keystone/examples/graphql-ts-gql/keystone.ts": {
+      "hash": "e714ab8514e97919601cf7d5ded5779d",
+      "errors": [],
+      "documents": []
+    },
+    "/Users/jaimeisraelcampeas/keystone/examples/graphql-ts-gql/schema.ts": {
+      "hash": "50195b070d3d8504f52c2afdbcca0523",
+      "errors": [],
+      "documents": [
+        {
+          "loc": {
+            "start": {
+              "line": 9,
+              "column": 27,
+              "index": 380
+            },
+            "end": {
+              "line": 19,
+              "column": 1,
+              "index": 560
+            }
+          },
+          "document": "\n  query LastestPostQuery($id: ID!) {\n    author(where: { id: $id }) {\n      id\n      posts(orderBy: { publishDate: desc }, take: 1) {\n        id\n        title\n      }\n    }\n  }\n"
+        }
+      ]
+    },
+    "/Users/jaimeisraelcampeas/keystone/examples/graphql-ts-gql/__generated__/ts-gql/LastestPostQuery.ts": {
+      "hash": "25f226c4a3dd9dc747a4fb85dde71e14",
+      "errors": [],
+      "documents": []
+    },
+    "/Users/jaimeisraelcampeas/keystone/examples/graphql-ts-gql/__generated__/ts-gql/@introspection.ts": {
+      "hash": "cf62f37ca58779511510d8c9b61e72d0",
+      "errors": [],
+      "documents": []
+    }
+  }
+}

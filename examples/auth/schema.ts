@@ -1,6 +1,6 @@
 import { list } from '@keystone-6/core'
 import { allowAll, denyAll } from '@keystone-6/core/access'
-import { text, checkbox, password } from '@keystone-6/core/fields'
+import { text, checkbox, password, relationship, timestamp, select, integer } from '@keystone-6/core/fields'
 import type { Lists } from '.keystone/types'
 
 // WARNING: this example is for demonstration purposes only
@@ -10,7 +10,17 @@ import type { Lists } from '.keystone/types'
 export type Session = {
   itemId: string
   data: {
-    isAdmin: boolean
+    name: string
+    role?: {
+      id: string
+      name: string
+      canCreateUsers: boolean
+      canReadUsers: boolean
+      canUpdateUsers: boolean
+      canDeleteUsers: boolean
+      canManageRoles: boolean
+      canAccessAdminUI: boolean
+    }
   }
 }
 
@@ -18,26 +28,51 @@ function hasSession({ session }: { session?: Session }) {
   return Boolean(session)
 }
 
-function isAdminOrSameUser({ session, item }: { session?: Session; item: Lists.User.Item | null }) {
+// Permission check functions
+function canCreateUsers({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canCreateUsers)
+}
+
+function canReadUsers({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canReadUsers)
+}
+
+function canUpdateUsers({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canUpdateUsers)
+}
+
+function canDeleteUsers({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canDeleteUsers)
+}
+
+function canManageRoles({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canManageRoles)
+}
+
+function canAccessAdminUI({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canAccessAdminUI)
+}
+
+function canUpdateUsersOrSameUser({ session, item }: { session?: Session; item: Lists.User.Item | null }) {
   // you need to have a session to do this
   if (!session) return false
 
-  // admins can do anything
-  if (session.data.isAdmin) return true
+  // users with update permission can do anything
+  if (session.data.role?.canUpdateUsers) return true
 
   // no item? then no
   if (!item) return false
 
-  // the authenticated user needs to be equal to the user we are updating
+  // the authenticated user can update themselves
   return session.itemId === item.id
 }
 
-function isAdminOrSameUserFilter({ session }: { session?: Session }) {
+function canReadUsersOrSameUserFilter({ session }: { session?: Session }) {
   // you need to have a session to do this
   if (!session) return false
 
-  // admins can see everything
-  if (session.data?.isAdmin) return {}
+  // users with read permission can see everything
+  if (session.data.role?.canReadUsers) return {}
 
   // only yourself
   return {
@@ -47,61 +82,395 @@ function isAdminOrSameUserFilter({ session }: { session?: Session }) {
   }
 }
 
-function isAdmin({ session }: { session?: Session }) {
-  // you need to have a session to do this
+// Todo permission functions
+function canCreateTodos({ session }: { session?: Session }) {
+  return Boolean(session) // Any authenticated user can create todos
+}
+
+function canReadTodos({ session }: { session?: Session }) {
+  return Boolean(session) // Any authenticated user can read todos (filtered by ownership)
+}
+
+function canUpdateTodos({ session, item }: { session?: Session; item: Lists.Todo.Item | null }) {
   if (!session) return false
+  if (!item) return false
+  
+  // Super Admin can update any todo
+  if (session.data.role?.canReadUsers) return true
+  
+  // Users can only update their own todos
+  return session.itemId === item.assignedTo?.id
+}
 
-  // admins can do anything
-  if (session.data.isAdmin) return true
+function canDeleteTodos({ session, item }: { session?: Session; item: Lists.Todo.Item | null }) {
+  if (!session) return false
+  if (!item) return false
+  
+  // Super Admin can delete any todo
+  if (session.data.role?.canDeleteUsers) return true
+  
+  // Users can only delete their own todos
+  return session.itemId === item.assignedTo?.id
+}
 
-  // otherwise, no
-  return false
+function canReadTodosFilter({ session }: { session?: Session }) {
+  if (!session) return false
+  
+  // Super Admin can see all todos
+  if (session.data.role?.canReadUsers) return {}
+  
+  // Regular users can only see their own todos
+  return {
+    assignedTo: {
+      id: {
+        equals: session.itemId,
+      },
+    },
+  }
+}
+
+// Audit Log access functions (Super Admin only)
+function canCreateAuditLogs({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canManageRoles) // Super Admin only
+}
+
+function canReadAuditLogs({ session }: { session?: Session }) {
+  const canRead = Boolean(session?.data.role?.canManageRoles) // Super Admin only
+  console.log(`🔍 canReadAuditLogs: user=${session?.data?.name}, canManageRoles=${session?.data?.role?.canManageRoles}, result=${canRead}`)
+  return canRead
+}
+
+function canUpdateAuditLogs({ session }: { session?: Session }) {
+  return false // Audit logs should never be updated
+}
+
+function canDeleteAuditLogs({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canManageRoles) // Super Admin only for cleanup
+}
+
+// Enterprise Features access functions (Super Admin only)
+function canCreateEnterpriseFeatures({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canManageRoles) // Super Admin only
+}
+
+function canReadEnterpriseFeatures({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canAccessAdminUI) // All users can read features
+}
+
+function canUpdateEnterpriseFeatures({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canManageRoles) // Super Admin only
+}
+
+function canDeleteEnterpriseFeatures({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canManageRoles) // Super Admin only
+}
+
+// Login Banner access functions
+function canCreateLoginBanner({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canManageRoles) // Super Admin only
+}
+
+function canReadLoginBanner({ session }: { session?: Session }) {
+  const canRead = Boolean(session?.data.role?.canManageRoles) // Super Admin only
+  console.log(`🔍 canReadLoginBanner: user=${session?.data?.name}, canManageRoles=${session?.data?.role?.canManageRoles}, result=${canRead}`)
+  return canRead
+}
+
+function canUpdateLoginBanner({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canManageRoles) // Super Admin only
+}
+
+function canDeleteLoginBanner({ session }: { session?: Session }) {
+  return Boolean(session?.data.role?.canManageRoles) // Super Admin only
 }
 
 export const lists = {
   User: list({
     access: {
       operation: {
-        create: allowAll,
-        query: allowAll,
-
-        // what a user can update is limited by
-        //   the access.filter.* and access.item.* access controls
-        update: hasSession,
-
-        // only admins can delete users
-        delete: isAdmin,
-      },
-      filter: {
-        update: isAdminOrSameUserFilter,
-      },
-      item: {
-        // this is redundant as ^filter.update should stop unauthorised updates
-        //   we include it anyway as a demonstration
-        update: isAdminOrSameUser,
+        create: canCreateLoginBanner,
+        query: canReadLoginBanner,
+        update: canUpdateLoginBanner,
+        delete: canDeleteLoginBanner,
       },
     },
     ui: {
-      // only show deletion options for admins
-      hideDelete: args => !isAdmin(args),
+      label: 'Login Page Banner',
+      description: 'Customizable banner content for the login page',
+      isHidden: ({ session }) => {
+        const canManage = session?.data?.role?.canManageRoles
+        const shouldHide = !canManage
+        console.log(`🔍 LoginBanner isHidden: user=${session?.data?.name}, canManageRoles=${canManage}, hiding=${shouldHide}`)
+        return shouldHide
+      }, // Hide from non-Super Admins
       listView: {
-        // the default columns that will be displayed in the list view
-        initialColumns: ['name', 'isAdmin'],
+        initialColumns: ['title', 'isActive', 'displayOrder'],
+        defaultFieldMode: ({ session }) => 
+          session?.data.role?.canManageRoles ? 'edit' : 'read',
       },
     },
     fields: {
-      // the user's name, used as the identity field for authentication
-      //   should not be publicly visible
-      //
-      //   we use isIndexed to enforce names are unique
-      //     that may not be suitable for your application
+      title: text({
+        validation: { isRequired: true },
+        ui: {
+          description: 'Banner title or identifier',
+        },
+      }),
+      
+      content: text({
+        validation: { isRequired: true },
+        ui: {
+          displayMode: 'textarea',
+          description: 'Main banner content (supports basic HTML)',
+        },
+      }),
+      
+      isActive: checkbox({
+        defaultValue: true,
+        ui: {
+          description: 'Show this banner on the login page',
+        },
+      }),
+      
+      displayOrder: integer({
+        defaultValue: 1,
+        ui: {
+          description: 'Order in which banners appear (lower numbers first)',
+        },
+      }),
+      
+      backgroundColor: text({
+        ui: {
+          description: 'CSS background color (e.g., #f3f4f6, transparent)',
+        },
+      }),
+      
+      textColor: text({
+        ui: {
+          description: 'CSS text color (e.g., #1f2937, #ffffff)',
+        },
+      }),
+      
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+      
+      updatedAt: timestamp({
+        db: { updatedAt: true },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+    },
+  }),
+
+  EnterpriseFeature: list({
+    access: {
+      operation: {
+        create: canCreateEnterpriseFeatures,
+        query: canReadEnterpriseFeatures,
+        update: canUpdateEnterpriseFeatures,
+        delete: canDeleteEnterpriseFeatures,
+      },
+    },
+    ui: {
+      label: 'Enterprise 101: Cursor Features',
+      description: 'Showcase of enterprise development capabilities and team productivity gains',
+      listView: {
+        initialColumns: ['title', 'category', 'status', 'impact'],
+        defaultFieldMode: 'read',
+      },
+      itemView: {
+        defaultFieldMode: ({ session }) => 
+          session?.data.role?.canManageRoles ? 'edit' : 'read',
+      },
+    },
+    fields: {
+      title: text({
+        validation: { isRequired: true },
+        ui: {
+          description: 'Feature or accomplishment title',
+        },
+      }),
+      
+      category: select({
+        options: [
+          { label: '🎯 Core Development', value: 'development' },
+          { label: '🛡️ Security & Access', value: 'security' },
+          { label: '📊 Enterprise Features', value: 'enterprise' },
+          { label: '⚡ Productivity Gains', value: 'productivity' },
+          { label: '🎨 UI/UX Enhancements', value: 'ui_ux' },
+          { label: '🔧 System Architecture', value: 'architecture' },
+        ],
+        defaultValue: 'development',
+        ui: {
+          displayMode: 'segmented-control',
+        },
+      }),
+      
+      description: text({
+        ui: {
+          displayMode: 'textarea',
+          description: 'Detailed description of the feature or what was accomplished',
+        },
+      }),
+      
+      technicalDetails: text({
+        ui: {
+          displayMode: 'textarea',
+          description: 'Technical implementation details and code changes',
+        },
+      }),
+      
+      businessValue: text({
+        ui: {
+          displayMode: 'textarea',
+          description: 'Business impact and value delivered',
+        },
+      }),
+      
+      cursorFeatures: text({
+        ui: {
+          displayMode: 'textarea',
+          description: 'Specific Cursor AI features that enabled this work',
+        },
+      }),
+      
+      status: select({
+        options: [
+          { label: '✅ Implemented', value: 'implemented' },
+          { label: '🚧 In Progress', value: 'in_progress' },
+          { label: '📋 Planned', value: 'planned' },
+          { label: '💡 Concept', value: 'concept' },
+        ],
+        defaultValue: 'implemented',
+        ui: {
+          displayMode: 'select',
+        },
+      }),
+      
+      impact: select({
+        options: [
+          { label: '🔥 High Impact', value: 'high' },
+          { label: '📈 Medium Impact', value: 'medium' },
+          { label: '📊 Low Impact', value: 'low' },
+        ],
+        defaultValue: 'medium',
+        ui: {
+          displayMode: 'select',
+        },
+      }),
+      
+      teamFeedback: text({
+        ui: {
+          displayMode: 'textarea',
+          description: 'Quotes and feedback from team members (Roger, Carlos, etc.)',
+        },
+      }),
+      
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+      
+      updatedAt: timestamp({
+        db: { updatedAt: true },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+    },
+  }),
+
+  Role: list({
+    access: {
+      operation: {
+        create: canManageRoles,
+        query: canAccessAdminUI,
+        update: canManageRoles,
+        delete: canManageRoles,
+      },
+    },
+    ui: {
+      listView: {
+        initialColumns: ['name', 'canCreateUsers', 'canReadUsers', 'canUpdateUsers', 'canDeleteUsers'],
+      },
+    },
+    fields: {
+      name: text({
+        validation: { isRequired: true },
+        isIndexed: 'unique',
+      }),
+      canCreateUsers: checkbox({
+        defaultValue: false,
+        label: 'Can Create Users',
+      }),
+      canReadUsers: checkbox({
+        defaultValue: false,
+        label: 'Can Read Users',
+      }),
+      canUpdateUsers: checkbox({
+        defaultValue: false,
+        label: 'Can Update Users',
+      }),
+      canDeleteUsers: checkbox({
+        defaultValue: false,
+        label: 'Can Delete Users',
+      }),
+      canManageRoles: checkbox({
+        defaultValue: false,
+        label: 'Can Manage Roles',
+      }),
+      canAccessAdminUI: checkbox({
+        defaultValue: false,
+        label: 'Can Access Admin UI',
+      }),
+      users: relationship({
+        ref: 'User.role',
+        many: true,
+        ui: {
+          displayMode: 'table',
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+    },
+  }),
+
+  User: list({
+    access: {
+      operation: {
+        create: canCreateUsers,
+        query: canReadUsers,
+        update: hasSession,
+        delete: canDeleteUsers,
+      },
+      filter: {
+        update: canReadUsersOrSameUserFilter,
+      },
+      item: {
+        update: canUpdateUsersOrSameUser,
+      },
+    },
+    ui: {
+      hideDelete: args => !canDeleteUsers(args),
+      listView: {
+        initialColumns: ['name', 'role'],
+      },
+    },
+    fields: {
       name: text({
         access: {
-          // only the respective user, or an admin can read this field
-          read: isAdminOrSameUser,
-
-          // only admins can update this field
-          update: isAdmin,
+          read: canUpdateUsersOrSameUser,
+          update: canUpdateUsers,
         },
         isFilterable: false,
         isOrderable: false,
@@ -111,47 +480,216 @@ export const lists = {
         },
       }),
 
-      // the user's password, used as the secret field for authentication
-      //   should not be publicly visible
       password: password({
         access: {
-          read: denyAll, // TODO: is this required?
-          update: isAdminOrSameUser,
+          read: denyAll,
+          update: canUpdateUsersOrSameUser,
         },
         validation: {
           isRequired: true,
         },
         ui: {
           itemView: {
-            // don't show this field if it isn't relevant
-            fieldMode: args => (isAdminOrSameUser(args) ? 'edit' : 'hidden'),
+            fieldMode: args => (canUpdateUsersOrSameUser(args) ? 'edit' : 'hidden'),
           },
           listView: {
-            fieldMode: 'hidden', // TODO: is this required?
+            fieldMode: 'hidden',
           },
         },
       }),
 
-      // a flag to indicate if this user is an admin
-      //  should not be publicly visible
-      isAdmin: checkbox({
+      role: relationship({
+        ref: 'Role.users',
         access: {
-          // only the respective user, or an admin can read this field
-          read: isAdminOrSameUser,
-
-          // only admins can create, or update this field
-          create: isAdmin,
-          update: isAdmin,
+          read: canUpdateUsersOrSameUser,
+          create: canCreateUsers,
+          update: canUpdateUsers,
         },
-        defaultValue: false,
         ui: {
-          // only admins can edit this field
           createView: {
-            fieldMode: args => (isAdmin(args) ? 'edit' : 'hidden'),
+            fieldMode: args => (canCreateUsers(args) ? 'edit' : 'hidden'),
           },
           itemView: {
-            fieldMode: args => (isAdmin(args) ? 'edit' : 'read'),
+            fieldMode: args => (canUpdateUsers(args) ? 'edit' : 'read'),
           },
+        },
+      }),
+      
+      // Add relationship to todos
+      todos: relationship({
+        ref: 'Todo.assignedTo',
+        many: true,
+        ui: {
+          displayMode: 'table',
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+    },
+  }),
+
+  Todo: list({
+    access: {
+      operation: {
+        create: canCreateTodos,
+        query: canReadTodos,
+        update: hasSession,
+        delete: hasSession,
+      },
+      filter: {
+        query: canReadTodosFilter,
+        update: canReadTodosFilter,
+        delete: canReadTodosFilter,
+      },
+      item: {
+        update: canUpdateTodos,
+        delete: canDeleteTodos,
+      },
+    },
+    ui: {
+      listView: {
+        initialColumns: ['title', 'status', 'priority', 'assignedTo', 'createdAt'],
+      },
+    },
+    fields: {
+      title: text({
+        validation: { isRequired: true },
+        label: 'Task Title',
+      }),
+      
+      description: text({
+        ui: { displayMode: 'textarea' },
+        label: 'Description',
+      }),
+      
+      status: select({
+        options: [
+          { label: 'To Do', value: 'todo' },
+          { label: 'In Progress', value: 'in_progress' },
+          { label: 'Completed', value: 'completed' },
+          { label: 'Blocked', value: 'blocked' },
+        ],
+        defaultValue: 'todo',
+        ui: {
+          displayMode: 'segmented-control',
+        },
+      }),
+      
+      priority: select({
+        options: [
+          { label: 'Low', value: 'low' },
+          { label: 'Medium', value: 'medium' },
+          { label: 'High', value: 'high' },
+          { label: 'Critical', value: 'critical' },
+        ],
+        defaultValue: 'medium',
+        ui: {
+          displayMode: 'select',
+        },
+      }),
+      
+      assignedTo: relationship({
+        ref: 'User.todos',
+        ui: {
+          displayMode: 'select',
+          labelField: 'name',
+        },
+        hooks: {
+          resolveInput: ({ operation, resolvedData, context }) => {
+            // Auto-assign to current user when creating a new todo
+            if (operation === 'create' && !resolvedData.assignedTo && context.session?.itemId) {
+              return { connect: { id: context.session.itemId } }
+            }
+            return resolvedData.assignedTo
+          },
+        },
+      }),
+      
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+      
+      updatedAt: timestamp({
+        db: { updatedAt: true },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+    },
+  }),
+  
+  AuditLog: list({
+    access: {
+      operation: {
+        create: canCreateAuditLogs,
+        query: canReadAuditLogs,
+        update: canUpdateAuditLogs,
+        delete: canDeleteAuditLogs,
+      },
+    },
+    ui: {
+      isHidden: ({ session }) => {
+        const canManage = session?.data?.role?.canManageRoles
+        const shouldHide = !canManage
+        console.log(`🔍 AuditLog isHidden: user=${session?.data?.name}, canManageRoles=${canManage}, hiding=${shouldHide}`)
+        return shouldHide
+      }, // Hide from non-Super Admins
+      hideCreate: true, // Don't show manual create button - logs are auto-generated
+      listView: {
+        initialColumns: ['user', 'action', 'timestamp', 'ipAddress'],
+        defaultFieldMode: 'read', // Make all fields read-only
+      },
+      itemView: {
+        defaultFieldMode: 'read', // Make all fields read-only
+      },
+    },
+    fields: {
+      user: relationship({
+        ref: 'User',
+        ui: {
+          displayMode: 'cards',
+          cardFields: ['name'],
+          inlineConnect: false,
+          inlineCreate: { fields: [] },
+          inlineEdit: { fields: [] },
+        },
+      }),
+      
+      action: text({
+        validation: { isRequired: true },
+        ui: {
+          description: 'The action performed (e.g., LOGIN, LOGOUT)',
+        },
+      }),
+      
+      timestamp: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+      
+      ipAddress: text({
+        ui: {
+          description: 'IP address of the user',
+        },
+      }),
+      
+      userAgent: text({
+        ui: {
+          description: 'Browser/device information',
+          displayMode: 'textarea',
+        },
+      }),
+      
+      sessionId: text({
+        ui: {
+          description: 'Session identifier',
         },
       }),
     },

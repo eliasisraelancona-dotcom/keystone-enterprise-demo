@@ -2,6 +2,7 @@ import { config } from '@keystone-6/core'
 import { statelessSessions } from '@keystone-6/core/session'
 import { createAuth } from '@keystone-6/auth'
 import { lists } from './schema'
+// import { components } from './admin/config' // Temporarily disabled
 
 // WARNING: this example is for demonstration purposes only
 //   as with each of our examples, it has not been vetted
@@ -77,6 +78,7 @@ export default withAuth(
       isAccessAllowed: ({ session }) => {
         return session?.data.role?.canUseAdminUI ?? false
       },
+      // components, // Temporarily disabled
     },
     // you can find out more at https://keystonejs.com/docs/apis/session#session-api
     session: statelessSessions(),

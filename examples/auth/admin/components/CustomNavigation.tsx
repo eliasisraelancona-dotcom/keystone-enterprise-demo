@@ -1,10 +1,4 @@
 import { useEffect, createElement } from 'react'
-import { useRouter } from 'next/router'
-
-import { ActionButton } from '@keystar/ui/button'
-import { Divider } from '@keystar/ui/layout'
-import { TooltipTrigger, Tooltip } from '@keystar/ui/tooltip'
-import { Text } from '@keystar/ui/typography'
 
 import { useQuery, useMutation, gql } from '@keystone-6/core/admin-ui/apollo'
 import {
@@ -40,28 +34,28 @@ export function CustomNavigation({ lists }: NavigationProps) {
 
   // Create SuperADMIN-only navigation items
   const superAdminNavItems = isSuperAdmin ? [
-    createElement(NavItem, { key: 'introduction', href: '/introduction' }, '(A) Introduction'),
-    createElement(NavItem, { key: 'cursor101', href: '/cursor101' }, '(B) Cursor 101'),
+    createElement(NavItem, { key: 'introduction', href: '/introduction', children: '(A) Introduction' }),
+    createElement(NavItem, { key: 'cursor101', href: '/cursor101', children: '(B) Cursor 101' }),
   ] : []
 
   // Create regular list navigation items
   const listNavItems = lists.map(list => 
-    createElement(NavItem, { key: list.key, href: getHrefFromList(list) }, list.label)
+    createElement(NavItem, { key: list.key, href: getHrefFromList(list), children: list.label })
   )
 
-  return createElement(NavContainer, {},
-    createElement(NavList, {},
-      createElement(NavItem, { href: '/' }, 'Dashboard'),
-      createElement(Divider),
+  return createElement(NavContainer, null,
+    createElement(NavList, null,
+      createElement(NavItem, { href: '/', children: 'Dashboard' }),
+      createElement('hr', { style: { margin: '8px 0', border: 'none', borderTop: '1px solid #e5e7eb' } }),
       // Integrate SuperADMIN tabs with regular navigation
       ...superAdminNavItems,
       ...listNavItems
     ),
-    createElement(NavFooter, {},
+    createElement(NavFooter, null,
       data?.authenticatedItem && createElement(SignoutButton, { 
         authItemLabel: data.authenticatedItem.name 
       }),
-      createElement(DeveloperResourcesMenu)
+      createElement(DeveloperResourcesMenu, null)
     )
   )
 }
@@ -73,25 +67,25 @@ const END_SESSION = gql`
 `
 
 function SignoutButton({ authItemLabel }: { authItemLabel: string }) {
-  const router = useRouter()
   const [endSession, { data }] = useMutation(END_SESSION)
   
   useEffect(() => {
     if (data?.endSession) {
-      router.push('/signin')
+      window.location.href = '/signin'
     }
-  }, [data, router])
+  }, [data])
 
-  return createElement(TooltipTrigger, {},
-    createElement(ActionButton, {
-      onPress: () => endSession(),
-      prominence: 'low'
-    }, 'Sign out'),
-    createElement(Tooltip, {},
-      createElement(Text, {},
-        'Signed in as ',
-        createElement('strong', {}, authItemLabel)
-      )
-    )
-  )
+  return createElement('button', {
+    onClick: () => endSession(),
+    title: `Signed in as ${authItemLabel}`,
+    style: {
+      background: 'none',
+      border: '1px solid #d1d5db',
+      borderRadius: '4px',
+      padding: '6px 12px',
+      fontSize: '14px',
+      cursor: 'pointer',
+      color: '#374151'
+    }
+  }, 'Sign out')
 }

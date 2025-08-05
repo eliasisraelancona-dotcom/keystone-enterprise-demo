@@ -1,49 +1,47 @@
 import { Fragment } from 'react'
-import { Heading, Text } from '@keystar/ui/typography'
-import { Box, Divider } from '@keystar/ui/layout'
 
 export function Cursor101Page() {
   return (
     <Fragment>
-      <Box padding="xlarge">
-        <Heading size="large">⚙️ Cursor 101: Built for Enterprise Engineers</Heading>
+      <div style={{ padding: '32px' }}>
+        <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '24px' }}>⚙️ Cursor 101: Built for Enterprise Engineers</h1>
         
-        <Box paddingTop="large">
-          <Text>
+        <div style={{ paddingTop: '24px' }}>
+          <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>
             Cursor isn't just a coding assistant — it's an AI pair programmer purpose-built for large, complex codebases. 
             Here's how it shines in real enterprise workflows like Adobe's:
-          </Text>
-        </Box>
+          </p>
+        </div>
 
-        <Box paddingTop="xlarge">
-          <Heading size="medium">🧠 Deep Codebase Understanding (Beyond Autocomplete)</Heading>
-          <Box paddingTop="medium">
-            <Text weight="semibold">Semantic Awareness:</Text>
-            <Text> Cursor understands your full codebase — not just the current file. In our Keystone.js monorepo, 
-            it grasped relationships across models, access control layers, and UI components.</Text>
+        <div style={{ paddingTop: '32px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>🧠 Deep Codebase Understanding (Beyond Autocomplete)</h2>
+          <div style={{ paddingTop: '16px' }}>
+            <span style={{ fontWeight: 'bold' }}>Semantic Awareness:</span>
+            <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Cursor understands your full codebase — not just the current file. In our Keystone.js monorepo, 
+            it grasped relationships across models, access control layers, and UI components.</p>
             
-            <Box paddingTop="medium" backgroundColor="neutral" padding="medium">
-              <Text family="code" size="small">
+            <div style={{ paddingTop: '16px', backgroundColor: '#f5f5f5', padding: '16px' }}>
+              <span style={{ fontFamily: 'monospace', fontSize: '12px' }}>
                 {`// Cursor instantly found role-based patterns across files
 function canReadUsers({ session }: { session?: Session }) {
   return Boolean(session?.data.role?.canReadUsers)
 }`}
-              </Text>
-            </Box>
+              </span>
+            </div>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Smart Search & Architecture Insight:</Text>
-              <Text> Ask, "What does this role resolver do?" — Cursor gives a contextual, structured explanation.</Text>
-            </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Smart Search & Architecture Insight:</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Ask, "What does this role resolver do?" — Cursor gives a contextual, structured explanation.</p>
+            </div>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Enterprise Pattern Recognition:</Text>
-              <Text> Cursor detected role-based access logic and generated compliant authentication flows — 
-              including secure session handling and password hashing.</Text>
-            </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Enterprise Pattern Recognition:</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Cursor detected role-based access logic and generated compliant authentication flows — 
+              including secure session handling and password hashing.</p>
+            </div>
             
-            <Box paddingTop="medium" backgroundColor="neutral" padding="medium">
-              <Text family="code" size="small">
+            <div style={{ paddingTop: '16px', backgroundColor: '#f5f5f5', padding: '16px' }}>
+              <span style={{ fontFamily: 'monospace', fontSize: '12px' }}>
                 {`// AI recognized RBAC pattern and suggested consistent implementation
 const isSuperAdmin = data?.authenticatedItem?.role?.name === 'Super Admin'
 
@@ -51,65 +49,65 @@ const isSuperAdmin = data?.authenticatedItem?.role?.name === 'Super Admin'
 filter: session?.data.role?.name === 'Super Admin' 
   ? {} 
   : { assignedTo: { id: { equals: session?.itemId } } }`}
-              </Text>
-            </Box>
-          </Box>
-        </Box>
+              </span>
+            </div>
+          </div>
+        </div>
 
-        <Divider marginY="xlarge" />
+        <hr style={{ margin: '32px 0', border: 'none', borderTop: '1px solid #e5e7eb' }} />
 
-        <Box paddingTop="large">
-          <Heading size="medium">⚡ Accelerated Development — Without Tab Switching</Heading>
-          <Box paddingTop="medium">
-            <Text weight="semibold">Inline Code Suggestions:</Text>
-            <Text> Get real-time, in-place edits that respect your architecture. No out-of-band suggestions 
-            or full blurbs to manually clean up.</Text>
+        <div style={{ paddingTop: '24px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>⚡ Accelerated Development — Without Tab Switching</h2>
+          <div style={{ paddingTop: '16px' }}>
+            <span style={{ fontWeight: 'bold' }}>Inline Code Suggestions:</span>
+            <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Get real-time, in-place edits that respect your architecture. No out-of-band suggestions 
+            or full blurbs to manually clean up.</p>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Multi-File Refactoring:</Text>
-              <Text> Rename functions, move logic, or refactor safely across services, models, and resolvers — all in flow.</Text>
-            </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Multi-File Refactoring:</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Rename functions, move logic, or refactor safely across services, models, and resolvers — all in flow.</p>
+            </div>
             
-            <Box paddingTop="medium" backgroundColor="neutral" padding="medium">
-              <Text family="code" size="small">
+            <div style={{ paddingTop: '16px', backgroundColor: '#f5f5f5', padding: '16px' }}>
+              <span style={{ fontFamily: 'monospace', fontSize: '12px' }}>
                 {`# Real example: Updated 5 files simultaneously for SuperADMIN tabs
 ✅ CustomNavigation.tsx (role check)
 ✅ config.tsx (page registration) 
 ✅ keystone.ts (admin UI config)
 ✅ IntroductionPage.tsx (new component)
 ✅ Cursor101Page.tsx (new component)`}
-              </Text>
-            </Box>
+              </span>
+            </div>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Ask Anything / Chat:</Text>
-              <Text> Use natural language to generate helpers, explain services, or scaffold new endpoints — 
-              like "Create a GraphQL mutation for assigning a role to a user."</Text>
-            </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Ask Anything / Chat:</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Use natural language to generate helpers, explain services, or scaffold new endpoints — 
+              like "Create a GraphQL mutation for assigning a role to a user."</p>
+            </div>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Test Generation:</Text>
-              <Text> Cursor Copilot builds full test suites, with mocks and edge cases, 
-              so your team can focus on business logic.</Text>
-            </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Test Generation:</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Cursor Copilot builds full test suites, with mocks and edge cases, 
+              so your team can focus on business logic.</p>
+            </div>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Terminal & Git Integrations:</Text>
-              <Text> Run commands, resolve merge conflicts, and commit — without leaving VSCode.</Text>
-            </Box>
-          </Box>
-        </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Terminal & Git Integrations:</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Run commands, resolve merge conflicts, and commit — without leaving VSCode.</p>
+            </div>
+          </div>
+        </div>
 
-        <Divider marginY="xlarge" />
+        <hr style={{ margin: '32px 0', border: 'none', borderTop: '1px solid #e5e7eb' }} />
 
-        <Box paddingTop="large">
-          <Heading size="medium">🎯 Enterprise-Grade Code Quality, Baked In</Heading>
-          <Box paddingTop="medium">
-            <Text weight="semibold">Security Best Practices:</Text>
-            <Text> Generated code followed industry standards — hashed passwords, secure tokens, scoped access.</Text>
+        <div style={{ paddingTop: '24px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>🎯 Enterprise-Grade Code Quality, Baked In</h2>
+          <div style={{ paddingTop: '16px' }}>
+            <span style={{ fontWeight: 'bold' }}>Security Best Practices:</span>
+            <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Generated code followed industry standards — hashed passwords, secure tokens, scoped access.</p>
             
-            <Box paddingTop="medium" backgroundColor="neutral" padding="medium">
-              <Text family="code" size="small">
+            <div style={{ paddingTop: '16px', backgroundColor: '#f5f5f5', padding: '16px' }}>
+              <span style={{ fontFamily: 'monospace', fontSize: '12px' }}>
                 {`// Proper password hashing via Keystone's secure field
 password: password({ validation: { isRequired: true } })
 // vs manual bcrypt implementation
@@ -119,63 +117,63 @@ query: canReadUsers,
 create: canCreateUsers,
 update: canUpdateUsers,
 delete: canDeleteUsers,`}
-              </Text>
-            </Box>
+              </span>
+            </div>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Scalable by Default:</Text>
-              <Text> Cursor helped design a role-based permission system with clean separation of concerns and extensible architecture.</Text>
-            </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Scalable by Default:</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Cursor helped design a role-based permission system with clean separation of concerns and extensible architecture.</p>
+            </div>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Professional Output:</Text>
-              <Text> Everything from tests to helper functions to docs is generated at the level expected for production use.</Text>
-            </Box>
-          </Box>
-        </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Professional Output:</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Everything from tests to helper functions to docs is generated at the level expected for production use.</p>
+            </div>
+          </div>
+        </div>
 
-        <Divider marginY="xlarge" />
+        <hr style={{ margin: '32px 0', border: 'none', borderTop: '1px solid #e5e7eb' }} />
 
-        <Box paddingTop="large">
-          <Heading size="medium">🚀 Stay in Flow — Where You Already Work</Heading>
-          <Box paddingTop="medium">
-            <Text weight="semibold">Zero Context Switching:</Text>
-            <Text> Cursor is embedded inside VSCode, where your engineers already live.</Text>
+        <div style={{ paddingTop: '24px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>🚀 Stay in Flow — Where You Already Work</h2>
+          <div style={{ paddingTop: '16px' }}>
+            <span style={{ fontWeight: 'bold' }}>Zero Context Switching:</span>
+            <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Cursor is embedded inside VSCode, where your engineers already live.</p>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Use it When You Need It:</Text>
-              <Text> It's non-intrusive — ignore it entirely, or let it unblock you in seconds.</Text>
-            </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Use it When You Need It:</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> It's non-intrusive — ignore it entirely, or let it unblock you in seconds.</p>
+            </div>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Prompting is the Skill:</Text>
-              <Text> Whether junior or senior, the real skill is in asking good questions — and Cursor responds intelligently.</Text>
-            </Box>
-          </Box>
-        </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Prompting is the Skill:</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> Whether junior or senior, the real skill is in asking good questions — and Cursor responds intelligently.</p>
+            </div>
+          </div>
+        </div>
 
-        <Divider marginY="xlarge" />
+        <hr style={{ margin: '32px 0', border: 'none', borderTop: '1px solid #e5e7eb' }} />
 
-        <Box paddingTop="large">
-          <Heading size="medium">🏗️ What We Built Together: Real Enterprise Examples</Heading>
-          <Box paddingTop="medium">
-            <Text weight="semibold">Development Speed: From hours to minutes</Text>
-            <Box paddingTop="small" paddingLeft="medium">
-              <Text>• Before: Manually navigating 698-line schema.ts file to find role functions</Text>
-              <Text>• With Cursor: "Find role-based access control functions" → instantly located all permission functions</Text>
-            </Box>
+        <div style={{ paddingTop: '24px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>🏗️ What We Built Together: Real Enterprise Examples</h2>
+          <div style={{ paddingTop: '16px' }}>
+            <span style={{ fontWeight: 'bold' }}>Development Speed: From hours to minutes</span>
+            <div style={{ paddingTop: '8px', paddingLeft: '16px' }}>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• Before: Manually navigating 698-line schema.ts file to find role functions</p>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• With Cursor: "Find role-based access control functions" → instantly located all permission functions</p>
+            </div>
             
-            <Box paddingTop="medium">
-              <Text weight="semibold">Problem Solving: Real challenges we solved</Text>
-              <Box paddingTop="small" paddingLeft="medium">
-                <Text>• Challenge: "Users can't login with 12345" → AI identified 8-character minimum → used `12345678`</Text>
-                <Text>• Challenge: "Seeding fails with permission errors" → AI suggested `context.sudo()` for proper permission bypass</Text>
-                <Text>• Challenge: "React imports failing in monorepo" → AI recognized Keystone conflict → used createElement approach</Text>
-              </Box>
-            </Box>
+            <div style={{ paddingTop: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Problem Solving: Real challenges we solved</span>
+              <div style={{ paddingTop: '8px', paddingLeft: '16px' }}>
+                <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• Challenge: "Users can't login with 12345" → AI identified 8-character minimum → used `12345678`</p>
+                <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• Challenge: "Seeding fails with permission errors" → AI suggested `context.sudo()` for proper permission bypass</p>
+                <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• Challenge: "React imports failing in monorepo" → AI recognized Keystone conflict → used createElement approach</p>
+              </div>
+            </div>
             
-            <Box paddingTop="medium" backgroundColor="neutral" padding="medium">
-              <Text family="code" size="small">
+            <div style={{ paddingTop: '16px', backgroundColor: '#f5f5f5', padding: '16px' }}>
+              <span style={{ fontFamily: 'monospace', fontSize: '12px' }}>
                 {`// Permission matrix we implemented in one session:
                     | Role         | Create | Read All | Update All | Delete | Manage Roles |
                     |-------------|--------|----------|------------|--------|-------------|
@@ -185,55 +183,55 @@ delete: canDeleteUsers,`}
                     // Real working demo accounts:
                     ✅ SuperADMIN: eliasisrael / 12345678 (see everything)
                     ✅ Regular: Alice Johnson / user12345 (limited view)`}
-              </Text>
-            </Box>
-          </Box>
-        </Box>
+              </span>
+            </div>
+          </div>
+        </div>
 
-        <Divider marginY="xlarge" />
+        <hr style={{ margin: '32px 0', border: 'none', borderTop: '1px solid #e5e7eb' }} />
 
-        <Box paddingTop="large">
-          <Heading size="medium">🔥 Try It Right Now!</Heading>
-          <Box paddingTop="medium">
-            <Text>Navigate to </Text>
-            <Text family="code">http://localhost:3000</Text>
-            <Text> and experience the difference:</Text>
+        <div style={{ paddingTop: '24px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>🔥 Try It Right Now!</h2>
+          <div style={{ paddingTop: '16px' }}>
+            <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>Navigate to </p>
+            <span style={{ fontFamily: 'monospace' }}>http://localhost:3000</span>
+            <p style={{ marginBottom: '16px', lineHeight: '1.6' }}> and experience the difference:</p>
             
-            <Box paddingTop="medium" paddingLeft="medium">
-              <Text weight="semibold">SuperADMIN Experience (eliasisrael/12345678):</Text>
-              <Text>• See ALL users, ALL todos, full administrative control</Text>
-              <Text>• Access to these special tabs (A) Introduction and (B) Cursor 101</Text>
-              <Text>• Complete CRUD operations across the entire system</Text>
-            </Box>
+            <div style={{ paddingTop: '16px', paddingLeft: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>SuperADMIN Experience (eliasisrael/12345678):</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• See ALL users, ALL todos, full administrative control</p>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• Access to these special tabs (A) Introduction and (B) Cursor 101</p>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• Complete CRUD operations across the entire system</p>
+            </div>
             
-            <Box paddingTop="medium" paddingLeft="medium">
-              <Text weight="semibold">Regular User Experience (Alice Johnson/user12345):</Text>
-              <Text>• Limited to own todos and profile only</Text>
-              <Text>• No access to Users, Roles, or special tabs</Text>
-              <Text>• Secure role-based filtering in action</Text>
-            </Box>
-            <Box paddingTop="medium" paddingLeft="medium">
-              <Text weight="semibold">Regular User Experience (Alice Johnson/user12345):</Text>
-              <Text>• We can update the todo title and description quite easily</Text>
-              <Text>• All of this is done in one session and via the "Tab" function on Cursor.</Text>
-              <Text>• Ideally, we would have a "Tab" function that would allow us to do this in one session.</Text>
-            </Box>
-          </Box>
-        </Box>
+            <div style={{ paddingTop: '16px', paddingLeft: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Regular User Experience (Alice Johnson/user12345):</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• Limited to own todos and profile only</p>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• No access to Users, Roles, or special tabs</p>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• Secure role-based filtering in action</p>
+            </div>
+            <div style={{ paddingTop: '16px', paddingLeft: '16px' }}>
+              <span style={{ fontWeight: 'bold' }}>Regular User Experience (Alice Johnson/user12345):</span>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• We can update the todo title and description quite easily</p>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• All of this is done in one session and via the "Tab" function on Cursor.</p>
+              <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>• Ideally, we would have a "Tab" function that would allow us to do this in one session.</p>
+            </div>
+          </div>
+        </div>
 
-        <Box paddingTop="xlarge" backgroundColor="surface" padding="large">
-          <Text weight="bold" size="large">
+        <div style={{ paddingTop: '32px', backgroundColor: '#fafafa', padding: '24px' }}>
+          <span style={{ fontWeight: 'bold', fontSize: '18px' }}>
             🚀 The Cursor Enterprise Difference
-          </Text>
-          <Box paddingTop="medium">
-            <Text>
+          </span>
+          <div style={{ paddingTop: '16px' }}>
+            <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>
               This entire production-ready enterprise system was built in ONE development session. 
               Traditional development would take days or weeks! That's the power of AI pair programming 
               with enterprise-grade understanding.
-            </Text>
-          </Box>
-        </Box>
-      </Box>
+            </p>
+          </div>
+        </div>
+      </div>
     </Fragment>
   )
 }

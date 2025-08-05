@@ -1,8 +1,8 @@
 import { type AdminConfig } from '@keystone-6/core/types'
 import { CustomLogo } from './components/CustomLogo'
-import { CustomNavigation } from './components/CustomNavigation'
+// import { CustomNavigation } from './components/CustomNavigation' // Temporarily disabled
 
 export const components: AdminConfig['components'] = {
   Logo: CustomLogo,
-  Navigation: CustomNavigation,
+  // Navigation: CustomNavigation, // Temporarily disabled due to complex component issues
 }

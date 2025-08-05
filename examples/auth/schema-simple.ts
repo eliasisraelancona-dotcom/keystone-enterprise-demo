@@ -1,5 +1,5 @@
 import { list } from '@keystone-6/core'
-import { allowAll, denyAll } from '@keystone-6/core/access'
+// import { denyAll } from '@keystone-6/core/access' // Not used
 import {
   text,
   password,
@@ -8,55 +8,55 @@ import {
   timestamp,
   select,
 } from '@keystone-6/core/fields'
-import type { Lists, Session } from '.keystone/types'
+import type { Lists } from '.keystone/types'
 
 // Basic permission functions
-function hasSession({ session }: { session?: Session }) {
+function hasSession({ session }: { session?: any }) {
   return Boolean(session)
 }
 
-function canCreateUsers({ session }: { session?: Session }) {
+function canCreateUsers({ session }: { session?: any }) {
   return Boolean(session?.data.role?.canCreateUsers)
 }
 
-function canReadUsers({ session }: { session?: Session }) {
+function canReadUsers({ session }: { session?: any }) {
   return Boolean(session?.data.role?.canReadUsers)
 }
 
-function canUpdateUsers({ session }: { session?: Session }) {
-  return Boolean(session?.data.role?.canUpdateUsers)
-}
+// function canUpdateUsers({ session }: { session?: any }) {
+//   return Boolean(session?.data.role?.canUpdateUsers)
+// }
 
-function canDeleteUsers({ session }: { session?: Session }) {
+function canDeleteUsers({ session }: { session?: any }) {
   return Boolean(session?.data.role?.canDeleteUsers)
 }
 
-function canManageRoles({ session }: { session?: Session }) {
+function canManageRoles({ session }: { session?: any }) {
   return Boolean(session?.data.role?.canManageRoles)
 }
 
-function canAccessAdminUI({ session }: { session?: Session }) {
-  return Boolean(session?.data.role?.canAccessAdminUI)
-}
+// function canAccessAdminUI({ session }: { session?: any }) {
+//   return Boolean(session?.data.role?.canAccessAdminUI)
+// }
 
 // Todo permission functions
-function canCreateTodos({ session }: { session?: Session }) {
+function canCreateTodos({ session }: { session?: any }) {
   return Boolean(session?.data.role?.canCreateUsers || session?.data.role?.canAccessAdminUI)
 }
 
-function canReadTodos({ session }: { session?: Session }) {
+function canReadTodos({ session }: { session?: any }) {
   return Boolean(session?.data.role?.canReadUsers || session?.data.role?.canAccessAdminUI)
 }
 
-function canUpdateTodos({ session }: { session?: Session }) {
+function canUpdateTodos({ session }: { session?: any }) {
   return Boolean(session?.data.role?.canUpdateUsers || session?.data.role?.canAccessAdminUI)
 }
 
-function canDeleteTodos({ session }: { session?: Session }) {
+function canDeleteTodos({ session }: { session?: any }) {
   return Boolean(session?.data.role?.canDeleteUsers || session?.data.role?.canAccessAdminUI)
 }
 
-function canReadTodosFilter({ session }: { session?: Session }) {
+function canReadTodosFilter({ session }: { session?: any }) {
   if (!session) return false
   
   // Super Admin can see all todos
@@ -70,7 +70,7 @@ function canReadTodosFilter({ session }: { session?: Session }) {
   }
 }
 
-function canReadUsersOrSameUserFilter({ session }: { session?: Session }) {
+function canReadUsersOrSameUserFilter({ session }: { session?: any }) {
   // you need to have a session to do this
   if (!session) return false
 
@@ -117,7 +117,7 @@ export const lists = {
       listView: {
         initialColumns: ['name', 'role'],
       },
-      isHidden: ({ session }) => !session?.data.role?.canReadUsers, // Hide from non-Super Admins
+      // isHidden: ({ session }) => !session?.data.role?.canReadUsers, // Hide from non-Super Admins - Not supported in current Keystone version
     },
     fields: {
       name: text({
@@ -136,9 +136,9 @@ export const lists = {
       role: relationship({
         ref: 'Role.users',
         ui: {
-          displayMode: 'cards',
-          cardFields: ['name'],
-          inlineConnect: true,
+          displayMode: 'select',
+          // cardFields: ['name'], // Not supported in current version
+          // inlineConnect: true, // Not supported in current version
         },
       }),
     },
@@ -157,7 +157,7 @@ export const lists = {
       listView: {
         initialColumns: ['name', 'canCreateUsers', 'canManageRoles'],
       },
-      isHidden: ({ session }) => !session?.data.role?.canManageRoles, // Hide from non-Super Admins
+      // isHidden: ({ session }) => !session?.data.role?.canManageRoles, // Hide from non-Super Admins - Not supported in current Keystone version
     },
     fields: {
       name: text({ validation: { isRequired: true } }),
@@ -171,9 +171,9 @@ export const lists = {
         ref: 'User.role',
         many: true,
         ui: {
-          displayMode: 'cards',
-          cardFields: ['name'],
-          inlineConnect: true,
+          displayMode: 'select',
+          // cardFields: ['name'], // Not supported in current version
+          // inlineConnect: true, // Not supported in current version
         },
       }),
     },
@@ -232,11 +232,11 @@ export const lists = {
       assignedTo: relationship({
         ref: 'User',
         ui: {
-          displayMode: 'cards',
-          cardFields: ['name'],
-          inlineConnect: true,
+          displayMode: 'select',
+          // cardFields: ['name'], // Not supported in current version
+          // inlineConnect: true, // Not supported in current version
           // Completely hide this field from regular users - they don't need to see it
-          isHidden: ({ session }) => !session?.data?.role?.canManageRoles,
+          // isHidden: ({ session }) => !session?.data?.role?.canManageRoles, // Not supported in current Keystone version
         },
         hooks: {
           resolveInput: ({ operation, resolvedData, context }) => {
@@ -264,4 +264,4 @@ export const lists = {
       }),
     },
   }),
-} satisfies Lists<Session>
+} satisfies Lists

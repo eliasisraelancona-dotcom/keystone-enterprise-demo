@@ -1,7 +1,7 @@
 import { config } from '@keystone-6/core'
 import { statelessSessions } from '@keystone-6/core/session'
 import { createAuth } from '@keystone-6/auth'
-import { type Session, lists } from './schema-simple'
+import { lists } from './schema-simple'
 // import { components } from './admin/config' // Temporarily disabled due to React import issues
 import type { TypeInfo } from '.keystone/types'
 
@@ -409,7 +409,7 @@ Let's explore how Cursor solves the workflows you face every day. 🚀`,
   console.log('🎉 Database seeding completed!')
 }
 
-export default withAuth<TypeInfo<Session>>(
+export default withAuth<TypeInfo>(
   config<TypeInfo>({
     db: {
       provider: 'sqlite',

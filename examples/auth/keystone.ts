@@ -3,7 +3,7 @@ import { statelessSessions } from '@keystone-6/core/session'
 import { createAuth } from '@keystone-6/auth'
 import { type Session, lists } from './schema-simple'
 import type { TypeInfo } from '.keystone/types'
-import { components } from './admin/config'
+// import { components } from './admin/config' // Temporarily disabled due to React import issues
 
 // WARNING: this example is for demonstration purposes only
 //   as with each of our examples, it has not been vetted
@@ -123,6 +123,8 @@ async function seedDatabase(context: any) {
   const regularUsers = [
     { name: 'Alice Johnson', role: regularRoleId },
     { name: 'Bob Smith', role: regularRoleId },
+    { name: 'Jaime Israel', role: regularRoleId }, // ← NEW USER
+    { name: 'Jose Gonzalez', role: regularRoleId },
   ]
   
   for (const userInfo of regularUsers) {
@@ -150,10 +152,19 @@ async function seedDatabase(context: any) {
     where: { name: { equals: 'Bob Smith' } },
   })
   
+  // Get the newly created users for todo assignment
+  const jaimeUser = await sudo.query.User.findMany({
+    where: { name: { equals: 'Jaime Israel' } },
+  })
+  const joseUser = await sudo.query.User.findMany({
+    where: { name: { equals: 'Jose Gonzalez' } },
+  })
+  
   const sampleTodos = [
     { title: 'Complete Adobe integration project', description: 'Finalize API integration with Adobe services', assignedTo: aliceUser[0]?.id, status: 'in_progress', priority: 'high' },
     { title: 'Review Cursor AI implementation', description: 'Test and optimize AI features for enterprise use', assignedTo: bobUser[0]?.id, status: 'todo', priority: 'medium' },
-    { title: 'Setup user onboarding flow', description: 'Create comprehensive onboarding experience', assignedTo: roleId, status: 'completed', priority: 'medium' },
+    { title: 'Setup user onboarding flow', description: 'Create comprehensive onboarding experience', assignedTo: jaimeUser[0]?.id, status: 'completed', priority: 'medium' },
+    { title: 'Test enterprise authentication', description: 'Verify RBAC and security features', assignedTo: joseUser[0]?.id, status: 'todo', priority: 'low' },
   ]
   
   for (const todoInfo of sampleTodos) {
@@ -196,7 +207,7 @@ export default withAuth(
       isAccessAllowed: context => {
         return Boolean(context.session?.data?.role?.canAccessAdminUI)
       },
-      components,
+      // components, // Temporarily disabled due to React import issues
     },
     // you can find out more at https://keystonejs.com/docs/apis/session#session-api
     session: statelessSessions({

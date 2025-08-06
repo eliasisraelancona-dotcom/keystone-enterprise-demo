@@ -2,6 +2,7 @@ import { config } from '@keystone-6/core'
 import { statelessSessions } from '@keystone-6/core/session'
 import { createAuth } from '@keystone-6/auth'
 import { lists } from './schema-simple'
+import { components } from './admin/config'
 import type { TypeInfo } from '.keystone/types'
 
 // WARNING: this example is for demonstration purposes only
@@ -118,12 +119,43 @@ async function seedDatabase(context: any) {
     console.log('✅ Regular User role already exists')
   }
 
+  // Create Contractor role
+  const contractorRole = await sudo.query.Role.findMany({
+    where: { name: { equals: 'Contractor' } },
+  })
+
+  let contractorRoleId: string
+  
+  if (contractorRole.length === 0) {
+    const newContractorRole = await sudo.query.Role.createOne({
+      data: {
+        name: 'Contractor',
+        canCreateUsers: false,
+        canReadUsers: false,
+        canUpdateUsers: false,
+        canDeleteUsers: false,
+        canManageRoles: false,
+        canAccessAdminUI: true, // Can access admin UI but only view Introduction and Cursor 101
+      },
+    })
+    contractorRoleId = newContractorRole.id
+    console.log('✅ Created Contractor role')
+  } else {
+    contractorRoleId = contractorRole[0].id
+    console.log('✅ Contractor role already exists')
+  }
+
   // Create sample users with regular user role for demo
   const regularUsers = [
     { name: 'Alice Johnson', role: regularRoleId },
     { name: 'Bob Smith', role: regularRoleId },
     { name: 'Jaime Israel', role: regularRoleId }, // ← NEW USER
     { name: 'Jose Gonzalez', role: regularRoleId },
+  ]
+
+  // Create contractor user
+  const contractorUsers = [
+    { name: 'Garret Crochet', role: contractorRoleId },
   ]
   
   for (const userInfo of regularUsers) {
@@ -140,6 +172,24 @@ async function seedDatabase(context: any) {
         },
       })
       console.log(`✅ Created demo user: ${userInfo.name} (password: user12345)`)
+    }
+  }
+
+  // Create contractor users
+  for (const userInfo of contractorUsers) {
+    const existingUser = await sudo.query.User.findMany({
+      where: { name: { equals: userInfo.name } },
+    })
+    
+    if (existingUser.length === 0) {
+      await sudo.query.User.createOne({
+        data: {
+          name: userInfo.name,
+          password: 'contractor123', // Contractor-specific password
+          role: { connect: { id: userInfo.role } },
+        },
+      })
+      console.log(`✅ Created contractor user: ${userInfo.name} (password: contractor123)`)
     }
   }
 
@@ -206,6 +256,8 @@ export default withAuth(
       isAccessAllowed: context => {
         return Boolean(context.session?.data?.role?.canAccessAdminUI)
       },
+      // Use custom admin components (navigation, logo, etc.)
+      components,
     },
     // you can find out more at https://keystonejs.com/docs/apis/session#session-api
     session: statelessSessions({

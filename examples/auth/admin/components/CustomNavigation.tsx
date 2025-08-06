@@ -1,4 +1,5 @@
 import { useEffect, createElement } from 'react'
+import type { JSX } from 'react'
 
 import { useQuery, useMutation, gql } from '@keystone-6/core/admin-ui/apollo'
 import {
@@ -31,26 +32,49 @@ export function CustomNavigation({ lists }: NavigationProps) {
   `)
 
   const isSuperAdmin = data?.authenticatedItem?.role?.name === 'Super Admin'
+  const isContractor = data?.authenticatedItem?.role?.name === 'Contractor'
 
-  // Create SuperADMIN-only navigation items
-  const superAdminNavItems = isSuperAdmin ? [
-    createElement(NavItem, { key: 'cursor101', href: '/cursor101', children: 'Cursor 101' }),
-  ] : []
+  // Debug logging
+  console.log('🔍 CustomNavigation Debug:', {
+    user: data?.authenticatedItem?.name,
+    role: data?.authenticatedItem?.role?.name,
+    isSuperAdmin,
+    isContractor
+  })
 
-  // Create regular list navigation items
-  const listNavItems = lists.map(list => 
-    createElement(NavItem, { key: list.key, href: getHrefFromList(list), children: list.label })
-  )
+  // For contractors: only show Introduction and Cursor 101
+  // For Super Admin: show everything
+  // For regular users: show lists but not special pages
+  let navItems: JSX.Element[] = []
+
+  if (isContractor) {
+    // Contractors only see Introduction and Cursor 101
+    navItems = [
+      createElement(NavItem, { key: 'introduction', href: '/introduction', children: 'Introduction' }),
+      createElement(NavItem, { key: 'cursor101', href: '/cursor101', children: 'Cursor 101' }),
+    ]
+  } else if (isSuperAdmin) {
+    // Super Admin sees everything
+    navItems = [
+      createElement(NavItem, { key: 'introduction', href: '/introduction', children: 'Introduction' }),
+      createElement(NavItem, { key: 'cursor101', href: '/cursor101', children: 'Cursor 101' }),
+      createElement('hr', { key: 'divider', style: { margin: '8px 0', border: 'none', borderTop: '1px solid #e5e7eb' } }),
+      ...lists.map(list => 
+        createElement(NavItem, { key: list.key, href: getHrefFromList(list), children: list.label })
+      )
+    ]
+  } else {
+    // Regular users see only lists (no special pages)
+    navItems = lists.map(list => 
+      createElement(NavItem, { key: list.key, href: getHrefFromList(list), children: list.label })
+    )
+  }
 
   return createElement(NavContainer, null,
     createElement(NavList, null,
       createElement(NavItem, { href: '/', children: 'Dashboard' }),
       createElement('hr', { style: { margin: '8px 0', border: 'none', borderTop: '1px solid #e5e7eb' } }),
-      // Introduction page - accessible to all users
-      createElement(NavItem, { key: 'introduction', href: '/introduction', children: 'Introduction' }),
-      // Integrate SuperADMIN tabs with regular navigation
-      ...superAdminNavItems,
-      ...listNavItems
+      ...navItems
     ),
     createElement(NavFooter, null,
       data?.authenticatedItem && createElement(SignoutButton, { 

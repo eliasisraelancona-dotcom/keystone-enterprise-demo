@@ -48,6 +48,21 @@ function canReadTodos({ session }: { session?: any }) {
   return Boolean(session?.data.role?.canReadUsers || session?.data.role?.canAccessAdminUI)
 }
 
+// Contractor permission functions for view-only access to specific pages
+function isContractor({ session }: { session?: any }) {
+  return Boolean(session?.data.role?.name === 'Contractor')
+}
+
+function canAccessIntroduction({ session }: { session?: any }) {
+  // Super Admin and Contractors can access Introduction
+  return Boolean(session?.data.role?.canManageRoles || isContractor({ session }))
+}
+
+function canAccessCursor101({ session }: { session?: any }) {
+  // Super Admin and Contractors can access Cursor 101
+  return Boolean(session?.data.role?.canManageRoles || isContractor({ session }))
+}
+
 function canUpdateTodos({ session }: { session?: any }) {
   return Boolean(session?.data.role?.canUpdateUsers || session?.data.role?.canAccessAdminUI)
 }

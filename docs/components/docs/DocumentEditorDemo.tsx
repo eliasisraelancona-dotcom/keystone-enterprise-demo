@@ -296,7 +296,7 @@ export function DocumentEditorDemo() {
     // slate looks like it's a controlled component but it actually isn't
     // so we need to re-mount it so that it looks at the updated value
     setKey(x => x + 1)
-  }, [documentFeatures])
+  }, [documentFeatures, value])
 
   const { theme } = useThemeContext()
   return (

@@ -49,7 +49,7 @@ export function Emoji({ symbol, alt, ...props }: EmojiProps) {
     if (posRef.current && posRef.current.offsetTop - window.pageYOffset < 50) {
       setShownTop(false)
     }
-  })
+  }, [])
 
   return (
     <span

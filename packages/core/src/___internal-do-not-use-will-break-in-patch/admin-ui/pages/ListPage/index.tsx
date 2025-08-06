@@ -247,7 +247,7 @@ function ListPage({ listKey }: ListPageProps) {
       !isDeepEqual(sort, defaultSort) ||
       !isDeepEqual(columns, list.initialColumns)
     )
-  }, [searchString, filters, sort, columns, list.initialColumns])
+  }, [searchString, filters, sort, columns, list.initialColumns, list])
 
   useEffect(() => {
     if (!isReady) return
@@ -262,7 +262,7 @@ function ListPage({ listKey }: ListPageProps) {
     setCurrentPage(getCurrentPage(list, { ...localStorageQuery, ...query }))
     setPageSize(getPageSize(list, { ...localStorageQuery, ...query }))
     setSearchString(typeof query.search === 'string' ? query.search : '')
-  }, [list, isReady])
+  }, [list, isReady, localStorageListKey, query])
 
   useEffect(() => {
     if (!isReady) return
@@ -292,7 +292,7 @@ function ListPage({ listKey }: ListPageProps) {
 
     localStorage.setItem(localStorageListKey, JSON.stringify(updatedQuery))
     replace({ query: updatedQuery })
-  }, [columns, sort, filters, currentPage, pageSize, searchString, list])
+  }, [columns, sort, filters, currentPage, pageSize, searchString, list, isReady, localStorageListKey, replace])
 
   const allowCreate = !(list.hideCreate ?? true)
   const allowDelete = !(list.hideDelete ?? true)
@@ -374,7 +374,7 @@ function ListPage({ listKey }: ListPageProps) {
     if (currentPage > lastPage) {
       setCurrentPage(lastPage)
     }
-  }, [data])
+  }, [data, currentPage, pageSize])
 
   const isEmpty = Boolean(data?.count === 0 && !isConstrained)
   const headers = shownFields.map(field => {

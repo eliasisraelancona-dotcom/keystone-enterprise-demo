@@ -343,7 +343,7 @@ export function Header() {
 
   useEffect(() => {
     handleClose()
-  }, [pathname])
+  }, [pathname, handleClose])
 
   return (
     <header ref={headerRef}>

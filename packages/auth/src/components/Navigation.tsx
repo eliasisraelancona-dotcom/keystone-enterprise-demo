@@ -76,7 +76,7 @@ function SignoutButton({ authItemLabel }: { authItemLabel: string }) {
     if (data?.endSession) {
       router.push('/signin')
     }
-  }, [data])
+  }, [data, router])
 
   return (
     <TooltipTrigger>

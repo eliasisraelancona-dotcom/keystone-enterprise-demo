@@ -180,10 +180,10 @@ function ItemForm({
   )
 
   const [value, setValue] = useState(() => initialValue)
-  function resetValueState() {
+  const resetValueState = useCallback(() => {
     setValue(() => initialValue)
-  }
-  useEffect(() => resetValueState(), [initialValue])
+  }, [initialValue])
+  useEffect(() => resetValueState(), [initialValue, resetValueState])
 
   const invalidFields = useInvalidFields(list.fields, value, isRequireds)
   const [forceValidation, setForceValidation] = useState(false)
